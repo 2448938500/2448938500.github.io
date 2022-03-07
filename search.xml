@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Win7文件共享账号切换</title>
+    <url>/2021/02/23/2021-02-23-Win7%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB%E8%B4%A6%E5%8F%B7%E5%88%87%E6%8D%A2/</url>
+    <content><![CDATA[<p>打开控制面板—选择小图标—凭据管理器</p>
+<a id="more"></a>
+
+<p><img src="https://i.loli.net/2021/02/23/OL5WB1txlfah2Zp.png" alt="图片.png"></p>
+<p>找到10.15的凭据，打开—从保管库中删除</p>
+<p><img src="https://i.loli.net/2021/02/23/VO9GyHMKBNifFSD.png" alt="图片.png"></p>
+<p>重启电脑<br>重新打开 \192.168.10.15 选择已有的权限，如行政人事部，输入新账号密码，点击记住凭据（后续重启电脑也无需在输入密码）</p>
+<h2 id="XP系统切换"><a href="#XP系统切换" class="headerlink" title="XP系统切换"></a>XP系统切换</h2><p><img src="https://i.loli.net/2021/02/23/IPk4ugmoytFU23d.png" alt="图片.png"></p>
+<p>control keymgr.dll</p>
+<p>找到对应的连接密码，删除，重启即可。</p>
+]]></content>
+      <categories>
+        <category>故障处理</category>
+        <category>文件服务器</category>
+      </categories>
+      <tags>
+        <tag>共享文件夹</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>什么是Hexo</title>
+    <url>/2021/02/23/2021-02-23-%E4%BB%80%E4%B9%88%E6%98%AFHexo/</url>
+    <content><![CDATA[<h2 id="Hexo简介"><a href="#Hexo简介" class="headerlink" title="Hexo简介"></a>Hexo简介</h2><p>Hexo(中文官方网站)是一个快速, 简洁且高效的博客框架. 让上百个页面在几秒内瞬间完成渲染. Hexo支持Github Markdown的所有功能,  并自己也拥有强大的插件系统.</p>
+<a id="more"></a>
+
+<h2 id="Hexo主要优点"><a href="#Hexo主要优点" class="headerlink" title="Hexo主要优点"></a>Hexo主要优点</h2><h3 id="1-支持Markdown"><a href="#1-支持Markdown" class="headerlink" title="1. 支持Markdown"></a>1. 支持Markdown</h3><p>更新网站博客，只需要本地编写markdown文件，无需专门的后台系统，一键更新维护。</p>
+<h3 id="2-可生成静态页面，不需要数据库"><a href="#2-可生成静态页面，不需要数据库" class="headerlink" title="2.可生成静态页面，不需要数据库"></a>2.可生成静态页面，不需要数据库</h3><p>全部生成静态文件，不仅对服务器负载小，而且快！</p>
+<p>结合nginx做为web服务器，指向对应文件夹。即可现实网站访问。</p>
+<h3 id="3-网站备份，迁移方便"><a href="#3-网站备份，迁移方便" class="headerlink" title="3. 网站备份，迁移方便"></a>3. 网站备份，迁移方便</h3><p>因为全是静态页面，无数据库。所以只需要保存原始md文件，或者文件夹即可。</p>
+<h3 id="4-省钱"><a href="#4-省钱" class="headerlink" title="4. 省钱"></a>4. 省钱</h3><p>如果网站部署到公网，使用wordpress等系统，需要购买支持数据库的服务器。费用较贵，而且还要注册域名。使用Hexo生成静态页面，可以很方便部署到其它免费平台，比如github,支持非备案域名绑定</p>
+]]></content>
+      <categories>
+        <category>WIKI知识库</category>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>WIKI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用nginx代理，实现邮件转发请求</title>
+    <url>/2021/02/23/2021-02-23-%E4%BD%BF%E7%94%A8nginx%E4%BB%A3%E7%90%86%EF%BC%8C%E5%AE%9E%E7%8E%B0%E9%82%AE%E4%BB%B6%E8%BD%AC%E5%8F%91%E8%AF%B7%E6%B1%82/</url>
+    <content><![CDATA[<p>nginx的stream可以转发tcp请求，利用这一原理就可以实现邮件转发</p>
+<a id="more"></a>
+
+<h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>内网中有服务器需要通过nginx服务器作为代理，连接外网的smtp服务器发送邮件。查看nginx作为邮件正向和反向代理，均配置过于繁杂。</p>
+<p>想起来，外网的smtp服务器是采用ssl协议，本质上属于tcp流。因此，在nginx上配置tcp端口转发就可以解决这个问题了。</p>
+<h2 id="配置方法"><a href="#配置方法" class="headerlink" title="配置方法"></a>配置方法</h2><p>开始配置stream</p>
+<p>[root@cml ~]# vim /etc/nginx/nginx.conf        //注意是nginx 主配置文件 </p>
+<p>user www www;</p>
+<p>……………..   //在配置文件最末尾添加如下内容： stream</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">stream &#123;</span><br><span class="line"></span><br><span class="line">​     server &#123;</span><br><span class="line"></span><br><span class="line">​        listen 25;</span><br><span class="line"></span><br><span class="line">​        proxy_connect_timeout 20s;</span><br><span class="line"></span><br><span class="line">​        proxy_pass smtp.qq.com:25;       //可代理邮件发送，已测试通过</span><br><span class="line"></span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>##测试使用nginx转发邮件</p>
+<p>方法一：使用linxu下的mail客户端 </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># echo &quot;测试邮件smtp-nginx&quot; | mail -s &quot;测试nginx&quot; [527794119@qq.com](mailto:527794119@qq.com)</span></span><br></pre></td></tr></table></figure>
+<p>方法二：使用设备测试发送</p>
+<p><img src="https://i.loli.net/2021/02/23/4tmEJKr8HQLfnzB.png" alt="clipboard.png"></p>
+<p>测试结果：</p>
+<p><img src="https://i.loli.net/2021/02/23/tLVYBJq4Xmsaf7C.png" alt="clipboard.png"></p>
+]]></content>
+      <categories>
+        <category>WIKI知识库</category>
+        <category>nginx</category>
+      </categories>
+      <tags>
+        <tag>nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>nginx实现tcp端口转发</title>
+    <url>/2021/02/24/2021-02-24-nginx%E5%AE%9E%E7%8E%B0tcp%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91/</url>
+    <content><![CDATA[<h3 id="原理：nginx的stream可以转发tcp请求，利用这一原理就可以实现端口映射"><a href="#原理：nginx的stream可以转发tcp请求，利用这一原理就可以实现端口映射" class="headerlink" title="原理：nginx的stream可以转发tcp请求，利用这一原理就可以实现端口映射"></a>原理：nginx的stream可以转发tcp请求，利用这一原理就可以实现端口映射</h3><a id="more"></a>
+
+<h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><p>第三方外包商，访问航信IBE(119.254.234.92:26891)，因航信有白名单设置，无法直接访问。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>可使用nginx将东海内一台服务器端口映射出公网。再让外包商访问东海nginx的公网IP+端口号</p>
+]]></content>
+      <categories>
+        <category>WIKI知识库</category>
+        <category>nginx</category>
+      </categories>
+      <tags>
+        <tag>nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>常用网址</title>
+    <url>/2021/02/20/My-New-Post/</url>
+    <content><![CDATA[<h2 id="运行生产"><a href="#运行生产" class="headerlink" title="运行生产"></a>运行生产</h2><p><a href="https://foc.donghaiair.cn/">FOC航班动态</a></p>
+<p><a href="https://sms.donghaiair.cn/">SMS管理系统</a></p>
+<p><a href="http://prep.donghaiair.cn:82/login">飞行服务网</a></p>
+<p><a href="http://192.168.8.154/mis2/">ME机务维修信息系统</a></p>
+<a id="more"></a>
+<h2 id="营销服务"><a href="#营销服务" class="headerlink" title="营销服务"></a>营销服务</h2><p><a href="http://dzsisapp.donghaiair.cn/">服务信息网</a></p>
+<p><a href="http://ffp.donghaiair.com/">常旅客系统</a></p>
+<p><a href="http://192.168.8.103:8080/DZCCOS/">呼叫中心系统</a></p>
+<h2 id="综合管理"><a href="#综合管理" class="headerlink" title="综合管理"></a>综合管理</h2><p><a href="http://mail.donghaiair.cn/">邮箱</a></p>
+<p><a href="https://pa.donghaiair.cn/">绩效管理系统</a></p>
+<p>##员工服务</p>
+<p><a href="http://www.carnoc.com/">民航资源网</a></p>
+]]></content>
+      <categories>
+        <category>日常办公</category>
+      </categories>
+      <tags>
+        <tag>网址</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Nginx实现基于ip的访问控制</title>
+    <url>/2021/02/25/Nginx%E5%AE%9E%E7%8E%B0%E5%9F%BA%E4%BA%8Eip%E7%9A%84%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6/</url>
+    <content><![CDATA[<p>Nginx实现基于ip的访问控制（Ngx_http_access_module模块）</p>
+<p>官方文档：<a href="http://nginx.org/en/docs/http/ngx_http_access_module.html">http://nginx.org/en/docs/http/ngx_http_access_module.html</a></p>
+<p>官方示例：</p>
+<p>The ngx_http_access_module module allows limiting access to certain client addresses.限定资源只被指定的客户端访问。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Example Configuration：</span><br><span class="line">location / &#123;</span><br><span class="line">    deny  192.168.1.1;        <span class="comment">#自上而下检测，匹配范围小的在上面</span></span><br><span class="line">    allow 192.168.1.0/24;</span><br><span class="line">    allow 10.1.1.0/16;</span><br><span class="line">    allow 2001:0db8::/32;</span><br><span class="line">    deny  all;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+
+<p>|  Syntax: | <code>**allow** *address* | *CIDR* | unix: | all;</code> |<br>| ——-: | ——————————————— |<br>| Default: | —                                             |<br>| Context: | <code>http</code>, <code>server</code>, <code>location</code>, <code>limit_except</code>  |</p>
+<p>| Syntax:  | <code>**deny** *address* | *CIDR* | unix: | all;</code> |<br>| :——- | ——————————————– |<br>| Default: | —                                            |<br>| Context: | <code>http</code>, <code>server</code>, <code>location</code>, <code>limit_except</code> |</p>
+<p>Context：适用配置段</p>
+]]></content>
+      <categories>
+        <category>WIKI知识库</category>
+        <category>nginx</category>
+      </categories>
+      <tags>
+        <tag>nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>APP下载</title>
+    <url>/2021/02/20/appdownload/</url>
+    <content><![CDATA[<h1 id="APP下载"><a href="#APP下载" class="headerlink" title="APP下载"></a>APP下载</h1><p><img src="https://oa.donghaiair.cn/static/img/ewang-qr.9938fcb.jpg" alt="avatar"></p>
+<a id="more"></a>
+
+<p><img src="https://oa.donghaiair.cn/static/img/feixing-qr.3c7b6e2.png" alt="avatar"></p>
+<p><img src="https://oa.donghaiair.cn/static/img/kecang-qr.bedfb2a.png" alt="avatar"></p>
+]]></content>
+      <categories>
+        <category>软件下载</category>
+      </categories>
+      <tags>
+        <tag>APP 下载</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Nginx主要功能</title>
+    <url>/2021/02/24/nginx%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD/</url>
+    <content><![CDATA[<h3 id="1、静态HTTP服务器"><a href="#1、静态HTTP服务器" class="headerlink" title="1、静态HTTP服务器"></a>1、静态HTTP服务器</h3><p>首先，Nginx是一个HTTP服务器，可以将服务器上的静态文件（如HTML、图片）通过HTTP协议展现给客户端。</p>
+<p>配置：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line"></span><br><span class="line">listen80; # 端口号</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line"></span><br><span class="line">root /usr/share/nginx/html; # 静态文件路径</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h3 id="2、反向代理服务器"><a href="#2、反向代理服务器" class="headerlink" title="2、反向代理服务器"></a>2、反向代理服务器</h3><p>什么是反向代理？</p>
+<p>客户端本来可以直接通过HTTP协议访问某网站应用服务器，网站管理员可以在中间加上一个Nginx，客户端请求Nginx，Nginx请求应用服务器，然后将结果返回给客户端，此时Nginx就是反向代理服务器。</p>
+<p>配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line"></span><br><span class="line">listen80;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line"></span><br><span class="line">proxy_pass http://192.168.20.1:8080; <span class="comment"># 应用服务器HTTP地址</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>既然服务器可以直接HTTP访问，为什么要在中间加上一个反向代理，不是多此一举吗？反向代理有什么作用？继续往下看，下面的负载均衡、虚拟主机等，都基于反向代理实现，当然反向代理的功能也不仅仅是这些。</p>
+<h3 id="3、负载均衡"><a href="#3、负载均衡" class="headerlink" title="3、负载均衡"></a>3、负载均衡</h3><p>当网站访问量非常大，网站站长开心赚钱的同时，也摊上事儿了。因为网站越来越慢，一台服务器已经不够用了。于是将同一个应用部署在多台服务器上，将大量用户的请求分配给多台机器处理。同时带来的好处是，其中一台服务器万一挂了，只要还有其他服务器正常运行，就不会影响用户使用。</p>
+<p>Nginx可以通过反向代理来实现负载均衡。</p>
+<p>配置 </p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">upstream myapp &#123;</span><br><span class="line"></span><br><span class="line">server192.168.20.1:8080; # 应用服务器1</span><br><span class="line"></span><br><span class="line">server192.168.20.2:8080; # 应用服务器2</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line"></span><br><span class="line">listen80;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line"></span><br><span class="line">proxy_pass http://myapp;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上配置会将请求轮询分配到应用服务器，也就是一个客户端的多次请求，有可能会由多台不同的服务器处理。可以通过ip-hash的方式，根据客户端ip地址的hash值将请求分配给固定的某一个服务器处理。</p>
+<p>配置：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">upstream myapp &#123;</span><br><span class="line"> ip_hash; # 根据客户端IP地址Hash值将请求分配给固定的一个服务器处理</span><br><span class="line"> server192.168.20.1:8080;</span><br><span class="line"> server192.168.20.2:8080;</span><br><span class="line"> &#125;</span><br><span class="line"> server &#123;</span><br><span class="line"> listen80;</span><br><span class="line"> location / &#123;</span><br><span class="line"> proxy_pass http://myapp;</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>另外，服务器的硬件配置可能有好有差，想把大部分请求分配给好的服务器，把少量请求分配给差的服务器，可以通过weight来控制。 </p>
+<p>配置：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">upstream myapp &#123;</span><br><span class="line">server192.168.20.1:8080weight=3; # 该服务器处理3/4请求</span><br><span class="line">server192.168.20.2:8080; # weight默认为1，该服务器处理1/4请求</span><br><span class="line"> &#125;</span><br><span class="line">server &#123;</span><br><span class="line">listen80;</span><br><span class="line">location / &#123;</span><br><span class="line">proxy_pass http://myapp;</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4、虚拟主机"><a href="#4、虚拟主机" class="headerlink" title="4、虚拟主机"></a>4、虚拟主机</h3><p>有的网站访问量大，需要负载均衡。然而并不是所有网站都如此出色，有的网站，由于访问量太小，需要节省成本，将多个网站部署在同一台服务器上。</p>
+<p>例如将<a href="https://link.zhihu.com/?target=http://www.aaa.com">http://www.aaa.com</a>和<a href="https://link.zhihu.com/?target=http://www.bbb.com">http://www.bbb.com</a>两个网站部署在同一台服务器上，两个域名解析到同一个IP地址，但是用户通过两个域名却可以打开两个完全不同的网站，互相不影响，就像访问两个服务器一样，所以叫两个虚拟主机。</p>
+<p>配置：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line"> listen80default_server;</span><br><span class="line"> server_name _;</span><br><span class="line"> return444; # 过滤其他域名的请求，返回444状态码</span><br><span class="line"> &#125;</span><br><span class="line"> server &#123;</span><br><span class="line"> listen80;</span><br><span class="line"> server_name www.aaa.com; # www.aaa.com域名</span><br><span class="line"> location / &#123;</span><br><span class="line"> proxy_pass http://localhost:8080; # 对应端口号8080</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br><span class="line">server &#123;</span><br><span class="line">listen80;</span><br><span class="line">server_name www.bbb.com; # www.bbb.com域名</span><br><span class="line">location / &#123;</span><br><span class="line">proxy_pass http://localhost:8081; # 对应端口号8081</span><br><span class="line"> &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>在服务器8080和8081分别开了一个应用，客户端通过不同的域名访问，根据server_name可以反向代理到对应的应用服务器。</p>
+<p>虚拟主机的原理是通过HTTP请求头中的Host是否匹配server_name来实现的，有兴趣的同学可以研究一下HTTP协议。</p>
+<p>另外，server_name配置还可以过滤有人恶意将某些域名指向你的主机服务器。</p>
+<h3 id="5、FastCGI"><a href="#5、FastCGI" class="headerlink" title="5、FastCGI"></a>5、FastCGI</h3><p>Nginx本身不支持<a href="https://link.zhihu.com/?target=http://www.2cto.com/kf/web/php/">PHP</a>等语言，但是它可以通过FastCGI来将请求扔给某些语言或框架处理（例如PHP、<a href="https://link.zhihu.com/?target=http://www.2cto.com/kf/web/Python/">Python</a>、Perl）。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">listen80;</span><br><span class="line">location ~ \.php$ &#123;</span><br><span class="line">include fastcgi_params;</span><br><span class="line">fastcgi_param SCRIPT_FILENAME /PHP文件路径<span class="variable">$fastcgi_script_name</span>; <span class="comment"># PHP文件路径</span></span><br><span class="line">fastcgi_pass127.0.0.1:9000; <span class="comment"># PHP-FPM地址和端口号</span></span><br><span class="line"><span class="comment"># 另一种方式：fastcgi_pass unix:/var/run/php5-fpm.sock;</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置中将.php结尾的请求通过FashCGI交给PHP-FPM处理，PHP-FPM是PHP的一个FastCGI管理器。</p>
+<h3 id="6、邮件代理"><a href="#6、邮件代理" class="headerlink" title="6、邮件代理"></a>6、邮件代理</h3><p>配置：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">stream &#123;</span><br><span class="line"></span><br><span class="line">​     server &#123;</span><br><span class="line"></span><br><span class="line">​        listen 25;</span><br><span class="line"></span><br><span class="line">​        proxy_connect_timeout 20s;</span><br><span class="line"></span><br><span class="line">​        proxy_pass smtp.qq.com:25;       //可代理邮件发送，已测试通过</span><br><span class="line"></span><br><span class="line">​    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>WIKI知识库</category>
+        <category>nginx</category>
+      </categories>
+      <tags>
+        <tag>nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>扫描文件夹</title>
+    <url>/2021/02/20/scan/</url>
+    <content><![CDATA[<h2 id="扫描文件夹"><a href="#扫描文件夹" class="headerlink" title="扫描文件夹"></a><a href="http://192.168.27.147:24388/">扫描文件夹</a></h2>]]></content>
+      <categories>
+        <category>日常办公</category>
+      </categories>
+      <tags>
+        <tag>扫描</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用后台发布文章</title>
+    <url>/2021/03/05/%E4%BD%BF%E7%94%A8%E5%90%8E%E5%8F%B0%E5%8F%91%E5%B8%83%E6%96%87%E7%AB%A0/</url>
+    <content><![CDATA[<h3 id="1-登录发布后台"><a href="#1-登录发布后台" class="headerlink" title="1.登录发布后台"></a>1.登录发布后台</h3><p><a href="http://devops.donghaiair.cn:4000/admin/">后台访问地址：http://devops.donghaiair.cn:4000/admin/</a></p>
+<h3 id="2-使用markdown格式编写文章"><a href="#2-使用markdown格式编写文章" class="headerlink" title="2.使用markdown格式编写文章"></a>2.使用markdown格式编写文章</h3><p><img src="/images/pasted-1.png" alt="upload successful"></p>
+<p>  注意进行分类，在Categories中添加分类关键字，方便日后查找</p>
+<h3 id="3-预览发布"><a href="#3-预览发布" class="headerlink" title="3.预览发布"></a>3.预览发布</h3>]]></content>
+      <categories>
+        <category>WIKI知识库</category>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>搭建nginx做文件下载服务器</title>
+    <url>/2021/02/24/%E6%90%AD%E5%BB%BAnginx%E5%81%9A%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<p>搭建nginx做文件下载服务器，实现通过web浏览器访问</p>
+<a id="more"></a>
+
+<p>1.修改nginx.conf配置文件,内容如下:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server &#123; </span><br><span class="line">        listen       8000;           <span class="comment"># 端口  </span></span><br><span class="line">        server_name  192.168.27.147;      <span class="comment"># 服务名  </span></span><br><span class="line">        charset utf-8;               <span class="comment"># 避免中文乱码</span></span><br><span class="line">        root    E:\Download\java;    <span class="comment"># 显示的根索引目录，注意这里要改成你自己的，目录要存在  </span></span><br><span class="line">        location / &#123;</span><br><span class="line">            autoindex on;             <span class="comment"># 开启索引功能  </span></span><br><span class="line">            autoindex_exact_size off; <span class="comment"># 关闭计算文件确切大小（单位bytes），只显示大概大小（单位kb、mb、gb）  </span></span><br><span class="line">            autoindex_localtime on;   <span class="comment"># 显示本机时间而非 GMT 时间  </span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>2.重启nginx</p>
+]]></content>
+      <categories>
+        <category>WIKI知识库</category>
+        <category>nginx</category>
+      </categories>
+      <tags>
+        <tag>nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>软件下载</title>
+    <url>/2021/02/20/%E8%BD%AF%E4%BB%B6%E4%B8%8B%E8%BD%BD/</url>
+    <content><![CDATA[<h1 id="软件下载"><a href="#软件下载" class="headerlink" title="软件下载"></a><a href="http://192.168.27.147:8000/download/">软件下载</a></h1>]]></content>
+      <categories>
+        <category>日常办公</category>
+      </categories>
+      <tags>
+        <tag>软件 下载</tag>
+      </tags>
+  </entry>
+</search>
